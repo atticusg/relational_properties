@@ -73,16 +73,9 @@ def create_split(sourcenames, sizes,disjoint=True):
     """
     restrictions = set()
     generators = []
-    sourcenames.reverse()
-    sizes.reverse()
-    for sourcename, size in zip(sourcenames,sizes):
-        generators.append(lambda: create_dataset(sourcename, size, restrictions))
-        if disjoint:
-            for pair, label in generators[-1]:
-                restrictions.append(pair)
-
-
-    generators.reverse()
+    generators.append(lambda: create_dataset(sourcenames[0] sizes[0], restrictions))
+    generators.append(lambda: create_dataset(sourcenames[1] sizes[1], restrictions))
+    generators.append(lambda: create_dataset(sourcenames[2] sizes[2], restrictions))
     return generators
 
 

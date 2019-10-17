@@ -17,16 +17,21 @@ def main():
     best_embeddings = ""
     bestF1 = 0
     best_params = None
-    split_names = sys.argv[1:4],
-    for hyp in [[100,20, 50, tf.nn.relu, 0.001], [100,20, 50, tf.nn.relu, 0.001]]:
+    split_names = sys.argv[1:4]
+    for hyp in [[1,1, 2, tf.nn.relu, 0.001]]:
         hypname = ""
         for param in hyp:
-            hypname += str(param)
-        train, dev, test = nli.create_split(split_names,[None,None,None], disjoint=False)
-        model = TfShallowNeuralClassifier(hidden_dim=hyp[0], max_iter=hyp[1], vocab_dim=hyp[2], hidden_activation=hyp[3], eta=hyp[4], embedding_dir="embeddings" + hypname, encoder=True)
+            if param == tf.nn.relu:
+                hypname += "relu"
+            elif param == tf.nn.tanh:
+                hypname += "tanh"
+            else:
+                hypname += str(param)
+        train, dev, test = nli.create_split(split_names,[5,5,5], disjoint=False)
+        model = TfShallowNeuralClassifier(hidden_dim=hyp[0], max_iter=hyp[1], vocab_dim=hyp[2], hidden_activation=hyp[3], eta=hyp[4], embedding_dir=split_names[0] + "embeddings" + hypname, encoder=True)
         results = nli.encoder_experiment(train,test,model)
         if results["macro-F1"] > bestF1:
-            best_embeddings = "embeddings" + hypname
+            best_embeddings = split_names[0] +"embeddings" + hypname
             best_params = hyp
     print(best_params)
 

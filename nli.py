@@ -22,6 +22,15 @@ def word_to_ind():
     with open(os.path.join('data', 'wordtoind'), "r") as f:
         return json.loads(f.readline().strip())
 
+def ind_to_word():
+    with open(os.path.join('data', 'wordtoind'), "r") as f:
+        wtoi = json.loads(f.readline().strip())
+    itow = dict()
+    for k in wtoi:
+        itow[wtoi[k]] = k
+    return itow
+
+
 def create_dataset(sourcename, size = None, restrictions = None):
     """ Create a dataset of balanced positive and negative examples from a raw list of positive examples.
     Parameters
@@ -73,9 +82,9 @@ def create_split(sourcenames, sizes,disjoint=True):
     """
     restrictions = set()
     generators = []
-    generators.append(lambda: create_dataset(sourcenames[0] sizes[0], restrictions))
-    generators.append(lambda: create_dataset(sourcenames[1] sizes[1], restrictions))
-    generators.append(lambda: create_dataset(sourcenames[2] sizes[2], restrictions))
+    generators.append(lambda: create_dataset(sourcenames[0], sizes[0], restrictions))
+    generators.append(lambda: create_dataset(sourcenames[1], sizes[1], restrictions))
+    generators.append(lambda: create_dataset(sourcenames[2], sizes[2], restrictions))
     return generators
 
 

@@ -14,7 +14,7 @@ with open(new_dir, "w", encoding="utf-8") as g:
     with open(root_dir, "r", encoding="utf-8") as f:
         for line in f.readlines():
             count +=1
-            suffix = " "
+            suffix = ""
             if len(wn.synsets(line.split()[0])) !=0:
                 synset = wn.synsets(line.split()[0])[0].name()
                 lemma =  str(wn.synsets(line.split()[0])[0].lemmas()[0])
@@ -33,4 +33,4 @@ with open(new_dir, "w", encoding="utf-8") as g:
             else:
                 for i in anto_mat[0, :]:
                     suffix += " 0"
-            g.write(line + suffix)
+            g.write(line + suffix + "\n")

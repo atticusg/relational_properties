@@ -28,29 +28,29 @@ for pos in ["n", "a", "v"]:
 
 for synset in tqdm(wn.all_synsets(pos='n')):
     # write the transitive closure of all hypernyms of a synset to file
-    for hyper in synset.hypernyms():
-        for grandhyper in hyper.hypernyms():
-            for aunt in grandhyper.hyponyms():
+    for hyper in synset.hypernyms() + synset.instance_hypernyms():
+        for grandhyper in hyper.hypernyms()+ hyper.instance_hypernyms():
+            for aunt in grandhyper.hyponyms()+ grandhyper.instance_hyponyms():
                 contra_edges.add((synset.name(), aunt.name()))
                 contra_edges.add((aunt.name(), synset.name()))
-                for cousin in aunt.hyponyms():
+                for cousin in aunt.hyponyms()+ aunt.instance_hyponyms():
                     contra_edges.add((synset.name(), cousin.name()))
                     contra_edges.add((cousin.name(), synset.name()))
     if (synset.name(), synset.name()) in contra_edges:
         contra_edges.remove((synset.name(), synset.name()))
-    for hyper in synset.hypernyms():
+    for hyper in synset.hypernyms()+ synset.instance_hypernyms():
         if (synset.name(), hyper.name()) in contra_edges:
             contra_edges.remove((synset.name(), hyper.name()))
         if (hyper.name(), synset.name()) in contra_edges:
             contra_edges.remove((hyper.name(),synset.name()))
-        for grandhyper in hyper.hypernyms():
+        for grandhyper in hyper.hypernyms()+ hyper.instance_hypernyms():
             if (synset.name(), grandhyper.name()) in contra_edges:
                 contra_edges.remove((synset.name(), grandhyper.name()))
             if (grandhyper.name(), synset.name()) in contra_edges:
                 contra_edges.remove((grandhyper.name(),synset.name()))
-    for hyper in synset.hypernyms():
+    for hyper in synset.hypernyms() + synset.instance_hypernyms():
         base_edges.add((synset.name(), hyper.name()))
-    for hyper in synset.closure(lambda s: s.hypernyms()):
+    for hyper in synset.closure(lambda s: s.hypernyms() + s.instance_hypernyms()):
         edges.add((synset.name(), hyper.name()))
     words.add(synset.name())
 
@@ -73,6 +73,7 @@ with open(os.path.join('data', 'antoposWN'), "w") as f:
     f.write(json.dumps(list(edges)))
 with open(os.path.join('data', 'contraposWN'), "w") as f:
     f.write(json.dumps(list(contra_edges)))
+    print(len(contra_edges))
 ratios = [0.5, 0.25, 0.125, 0.06025, 0.030125]
 l = len(edges)
 for prefix in ["", "contra"]:
